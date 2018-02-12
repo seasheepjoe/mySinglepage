@@ -4,6 +4,7 @@ $(function () {
         var username = $('#username').val();
         var pwd = $('#pwd').val();
         console.log(username, pwd);
+        toSessionStorage(username, pwd);
         return false;
     });
 });
@@ -26,6 +27,11 @@ function loadPage(page) {
 }
 
 function toSessionStorage(data1, data2) {
-    var userData = []
-    sessionStorage.setItem
+    if (sessionStorage.getItem('userdata') === null) {
+        var userData = [data1, data2];
+        sessionStorage.setItem('userdata', userData);
+    } else {
+        alert('You already are on a session');
+    }
+
 }
