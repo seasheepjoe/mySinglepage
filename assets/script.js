@@ -1,15 +1,31 @@
 $(function () {
-    var form = $('form');
-    form.submit(function () {
+    var loginForm = $('form[name="login"]');
+    loginForm.submit(function () {
         var username = $('#username').val();
         var pwd = $('#pwd').val();
-        console.log(username, pwd);
         toSessionStorage(username, pwd);
-        return false;
+        remove(loginForm);
+    });
+
+    if (sessionStorage.getItem('username') !== null) {
+        document.querySelector('#title').innerHTML += sessionStorage.getItem('username');
+    } else {
+        var menu = $('#menu');
+        remove(menu);
+    }
+
+    $('#logout').click(function () {
+        logout();
+    });
+
+    var editForm = $('form[name="edit-username"');
+    editForm.submit(function () {
+        var newUsername = $('#newUsername').val();
+        updateSessionStorage(newUsername);
     });
 });
 
-loadPage('login');
+getUserInSessionStorage();
 
 function loadPage(page) {
     $.ajax({
@@ -27,11 +43,33 @@ function loadPage(page) {
 }
 
 function toSessionStorage(data1, data2) {
-    if (sessionStorage.getItem('userdata') === null) {
-        var userData = [data1, data2];
-        sessionStorage.setItem('userdata', userData);
+    if (sessionStorage.getItem('username') === null && sessionStorage.getItem('userpassword') === null) {
+        sessionStorage.setItem('username', data1);
+        sessionStorage.setItem('userpassword', data2);
     } else {
         alert('You already are on a session');
     }
+}
 
+function getUserInSessionStorage() {
+    if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('userpassword') !== null) {
+        var username = sessionStorage.getItem('username');
+        loadPage('profil');
+    } else {
+        loadPage('login');
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('userpassword');
+    window.location.reload();
+}
+
+function remove(item) {
+    item.text(' ');
+}
+
+function updateSessionStorage(newUsername) {
+    sessionStorage.setItem('username', newUsername);
 }

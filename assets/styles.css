@@ -1,0 +1,10 @@
+#menu>div {
+    cursor: pointer;
+}
+
+#menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+}
