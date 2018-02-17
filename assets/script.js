@@ -3,8 +3,17 @@ $(function () {
     loginForm.submit(function () {
         var username = $('#username').val();
         var pwd = $('#pwd').val();
-        toSessionStorage(username, pwd);
-        remove(loginForm);
+        if (username.length <= 4 || pwd.length <= 4) {
+            $('.errors').html('Username or password must be at least 5 characters');
+            return false;
+        } else if (username.length >= 14 || pwd.length >= 14) {
+            $('.errors').html('Username or password must be max 15 characters');
+            return false;
+        } else {
+            toSessionStorage(username, pwd);
+            remove(loginForm);
+            $('.errors').html(' ');
+        }
     });
 
     if (sessionStorage.getItem('username') !== null) {
@@ -12,6 +21,7 @@ $(function () {
     } else {
         var menu = $('#menu');
         remove(menu);
+        menu.text('Please login');
     }
 
     $('#logout').click(function () {
@@ -21,7 +31,16 @@ $(function () {
     var editForm = $('form[name="edit-username"');
     editForm.submit(function () {
         var newUsername = $('#newUsername').val();
-        updateSessionStorage(newUsername);
+        if (newUsername.length <= 4) {
+            $('.errors').html('Username must be at least 5 characters');
+            return false;
+        } else if (username.length >= 14) {
+            $('.errors').html('Username must be max 15 characters');
+            return false;
+        } else {
+            updateSessionStorage(newUsername);
+            $('.errors').html(' ');
+        }
     });
 });
 
