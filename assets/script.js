@@ -34,7 +34,7 @@ $(function () {
         if (newUsername.length <= 4) {
             $('.errors').html('Username must be at least 5 characters');
             return false;
-        } else if (username.length >= 14) {
+        } else if (newUsername.length >= 14) {
             $('.errors').html('Username must be max 15 characters');
             return false;
         } else {
@@ -53,7 +53,6 @@ function loadPage(page) {
         success: function (data) {
             console.log('Ok');
             document.body.innerHTML += data;
-
         },
         error: function (data) {
             console.log('NOPE');
