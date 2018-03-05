@@ -1,63 +1,30 @@
-$(function () {
-    var loginForm = $('form[name="login"]');
-    loginForm.submit(function () {
-        var username = $('#username').val();
-        var pwd = $('#pwd').val();
-        if (username.length <= 4 || pwd.length <= 4) {
-            $('.errors').html('Username or password must be at least 5 characters');
-            return false;
-        } else if (username.length >= 14 || pwd.length >= 14) {
-            $('.errors').html('Username or password must be max 15 characters');
-            return false;
-        } else {
-            toSessionStorage(username, pwd);
-            remove(loginForm);
-            $('.errors').html(' ');
-        }
-    });
-
+window.onload = function () {
     if (sessionStorage.getItem('username') !== null) {
         document.querySelector('#title').innerHTML += sessionStorage.getItem('username');
     } else {
-        var menu = $('#menu');
+        var menu = document.querySelector('#menu');
         remove(menu);
-        menu.text('Please login');
+        menu.innerHTML = 'Please login';
     }
-
-    $('#logout').click(function () {
-        logout();
-    });
-
-    var editForm = $('form[name="edit-username"');
-    editForm.submit(function () {
-        var newUsername = $('#newUsername').val();
-        if (newUsername.length <= 4) {
-            $('.errors').html('Username must be at least 5 characters');
-            return false;
-        } else if (newUsername.length >= 14) {
-            $('.errors').html('Username must be max 15 characters');
-            return false;
-        } else {
-            updateSessionStorage(newUsername);
-            $('.errors').html(' ');
-        }
-    });
-});
+}
 
 getUserInSessionStorage();
 
-function loadPage(page) {
-    $.ajax({
-        url: page + '.html',
-        type: 'get',
-        success: function (data) {
-            console.log('Ok');
-            document.body.innerHTML += data;
-        },
-        error: function (data) {
-            console.log('NOPE');
+function loadPage(page, callback) {
+    var http = new XMLHttpRequest();
+    var url = page;
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    http.onload = function () {
+        if (http.readyState == 4 && http.status == 200) {
+            document.body.innerHTML += http.responseText;
+            if (typeof callback !== 'undefined') {
+                callback();
+            }
         }
-    });
+    };
+    http.send();
 }
 
 function toSessionStorage(data1, data2) {
@@ -72,9 +39,49 @@ function toSessionStorage(data1, data2) {
 function getUserInSessionStorage() {
     if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('userpassword') !== null) {
         var username = sessionStorage.getItem('username');
-        loadPage('profil');
+        loadPage('profil', edit);
     } else {
-        loadPage('login');
+        loadPage('login', login);
+    }
+}
+
+function login() {
+    var loginForm = document.querySelector('form[name="login"]');
+    loginForm.onsubmit = function () {
+        var username = document.querySelector('#username').value;
+        var pwd = document.querySelector('#pwd').value;
+        if (username.length <= 4 || pwd.length <= 4) {
+            document.querySelector('.errors').innerHTML = ('Username or password must be at least 5 characters');
+            return false;
+        } else if (username.length >= 14 || pwd.length >= 14) {
+            document.querySelector('.errors').innerHTML = ('Username or password must be max 15 characters');
+            return false;
+        } else {
+            toSessionStorage(username, pwd);
+            remove(loginForm);
+            document.querySelector('.errors').innerHTML = (' ');
+        }
+    };
+}
+
+function edit() {
+    var editForm = document.querySelector('form[name="edit-username"');
+    editForm.onsubmit = function () {
+        var newUsername = document.querySelector('#newUsername').value;
+        if (newUsername.length <= 4) {
+            document.querySelector('.errors').innerHTML = ('Username must be at least 5 characters');
+            return false;
+        } else if (newUsername.length >= 14) {
+            document.querySelector('.errors').innerHTML = ('Username must be max 15 characters');
+            return false;
+        } else {
+            updateSessionStorage(newUsername);
+            document.querySelector('.errors').innerHTML = (' ');
+        }
+    };
+
+    document.querySelector('#logout').onclick = function () {
+        logout();
     }
 }
 
@@ -85,7 +92,7 @@ function logout() {
 }
 
 function remove(item) {
-    item.text(' ');
+    item.innerHTML = ' ';
 }
 
 function updateSessionStorage(newUsername) {
